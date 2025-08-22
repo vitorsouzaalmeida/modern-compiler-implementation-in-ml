@@ -1,4 +1,9 @@
 (executable
  (public_name learningOcaml)
  (name main)
- (libraries learningOcaml))
+ (libraries learningOcaml ounit2))
+
+(test
+ (name maps_test)
+ (libraries ounit2)
+ (modules maps_test maps))
