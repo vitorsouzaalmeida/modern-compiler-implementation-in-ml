@@ -1,5 +1,3 @@
-let () = Printf.printf "hello world"
-
 let rec last (lst : 'a list) =
   match lst with [] -> None | [ x ] -> Some x | _ :: tail -> last tail
 
@@ -67,6 +65,70 @@ let () =
   match lst_find 0 my_list with
   | None -> print_endline "This item do not exists"
   | Some result -> Printf.printf "Found: %s" (string_of_int result)
+
+(* Binary Search Tree - fast access to two elements - the median
+  elements above and below the hiven given node. Fast search and flexible update.
+  It's basically a linked list with two pointers per node
+
+  Rooted binary tree is recursively defined as either being empty or consisting 
+  of a nood called the root, together with two rooted binary trees called the left
+  and the right subtrees. The nodes order matters in rooted trees, so left is different
+  from right
+
+  The binary search tree labels each node with a single key, where all nodes in left
+  subtree of x, have keys < x, while all nodes in the right subtree of x have keys > x.
+
+  Binary tree nodes have left and right pointers fields, an optional parent pointer,
+  and a data field.
+*)
+
+type 'a tree = Empty | Node of 'a * 'a tree * 'a tree
+
+let sample_tree () =
+  Node
+    ( 5,
+      Node (3, Node (1, Empty, Empty), Node (4, Empty, Empty)),
+      Node (8, Node (7, Empty, Empty), Node (10, Empty, Empty)) )
+
+let rec search_tree (tree : 'a tree) item =
+  match tree with
+  | Empty -> Empty
+  | Node (nitem, left, right) ->
+      if nitem = item then Node (nitem, left, right)
+      else if item < nitem then search_tree left item
+      else search_tree right item
+
+let rec find_min (tree : 'a tree) =
+  match tree with
+  | Empty -> Empty
+  | Node (nitem, Empty, right) -> Node (nitem, Empty, right)
+  | Node (_, left, _) -> find_min left
+
+let rec list_labels (tree : 'a tree) fn acc =
+  match tree with
+  | Empty -> acc
+  | Node (nitem, left, right) ->
+      let acc' = fn acc nitem in
+      let acc'' = list_labels left fn acc' in
+      list_labels right fn acc''
+
+let () =
+  let result = list_labels (sample_tree ()) (fun acc x -> x :: acc) [] in
+  Printf.printf "Tree values: ";
+  List.iter (fun x -> Printf.printf "%d " x) result;
+  print_endline ""
+
+let () =
+  let result = find_min (sample_tree ()) in
+  match result with
+  | Empty -> print_endline "nhe"
+  | Node (item, _, _) -> Printf.printf "Min tree value: %d\n" item
+
+let () =
+  let result = search_tree (sample_tree ()) 7 in
+  match result with
+  | Empty -> print_endline "Item not found tree"
+  | Node (item, _, _) -> Printf.printf "Item found: %d\n" item
 
 (* leetcode *)
 (* merge two already sorted arrays *)
