@@ -149,3 +149,31 @@ let () =
   | [||] -> print_endline "Empty"
   | _ ->
       Array.iter (fun x -> Printf.printf "Items: %s\n" (string_of_int x)) merged
+
+let rec factorial (n : int) =
+  match n with 0 -> 1 | 1 -> 1 | n -> n * factorial (n - 1)
+
+(* 
+    3 * factorial (2)
+    3 * (2 * factorial (1))
+    3 * (2 * 1)
+    3 * 2
+    6
+  *)
+let factorial_linear (n : int) : int =
+  let rec aux n acc = match n with 0 -> acc | n -> aux (n - 1) (n * acc) in
+  aux n 1
+
+(* 
+    factorial_linear 3
+    aux 3 1 
+    -> aux 2 (3 * 1) = aux 2 3 
+    -> aux 1 (2 * 3) = aux 1 6
+    -> aux 0 (1 * 6) - aux 0 6
+    -> 6
+  *)
+let () =
+  let result = factorial 1 in
+  Printf.printf "Factorial (recursive): %d\n" result;
+  let result_linear = factorial_linear 100000 in
+  Printf.printf "Factorial (linear): %d\n" result_linear
